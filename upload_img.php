@@ -1,61 +1,6 @@
 
 <?php
 
-		session_start();
-
-		include_once"model/bdd.php";
-		$bdd=bdd();
-
-
-  
-		if(!isset($_SESSION['id'])){
-			// header('Location:index.php');
-
-			echo "non non";
-		}
-		else
-		{
-			
-            	$sms=0;
-              $cat=0;
-
-              $req_messages=$bdd->query('SELECT * FROM messages');
-            
-              $req_categorie=$bdd->query('SELECT * FROM categorie');
-
-              while ($ok=$req_messages->fetch())  
-              { 
-                $sms++;
-              }
-
-              while ($ok_cat=$req_categorie->fetch())  
-              { 
-                $cat++;
-              }
-
-
-		
-		// OK
-			
-			$requser=$bdd->prepare('SELECT * FROM users WHERE id=?');
-			
-			$requser->execute(array($_SESSION['id']));
-			
-			$user=$requser->fetch();
-			
-			
-			if(isset($_POST['prod_submit']))
-			{
-				$nom_prod=$_POST['produit'];
-				$price_prod=$_POST['price'];
-				$cate_prod=$_POST['cate_prod'];
-				$descript_prod=$_POST['descript_prod'];
-				 
-				 // Mon insertion dans le BDD
-			
-
-			}
-			
 			
 			if(isset($_FILES['img1']) AND !empty($_FILES['img1']['name']))
 			{
@@ -121,7 +66,5 @@
 							
 			}
 
-
-	}
 
 ?>
