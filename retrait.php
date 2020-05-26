@@ -24,17 +24,17 @@
     
     $json = json_decode(file_get_contents('php://input'), true);
     
-    $priceCoti=$json['priceCoti'];
     $idClient = $json['idClient'];
-    $datePaye = $json['date_paye'];
-    $methPaye = $json['meth_paye'];
-    $refPaye = $json['ref_paye'];
-    
+    $priceRetr = $json['priceRetr'];
     $response_array = array();
     
-        // echo $sommeTotal;
+    $priceRetr=(int)priceRetrait;
+    $priceRetr=-$priceRetr;
 
     try {
+        
+        // 
+        
 
 
         $requete=$bdd->prepare(
@@ -44,38 +44,46 @@
 
         $ok=$requete->execute(array(
             'id_client'=>$idClient,
-            'priceCoti'=>$priceCoti,
+            'priceCoti'=>$priceRetrai,
             'methPaye'=> $methPaye,
             'refPaye'=> $refPage,
             'datePaye'=> $datePaye
             ));
             
-            
+
+
+        
+        // Trouvé la cotisation
         
         $reqSolde=$bdd->prepare('SELECT * FROM cotisation WHERE client_id = :idClient');
-        
-        // $idClient=(int)306;
-        
-        $idClient=sprintf("%06d", $idClient);
+        $NewIdClient=sprintf("%06d", $idClient);
         
         $reqSolde->execute(array(
-            'idClient'=>$idClient,
-            ));
+            'idClient'=>$NewIdClient,
+        ));
 
-        while ($soldeClient=$reqSolde->fetch())  
-              { 
+        /*Somme de la cotisation du client sélectionné*/
+        while($soldeClient=$reqSolde->fetch()){ 
                 $value = $soldeClient['priceCoti'];
                 
                 $sommeTotal += $value;
-              }
-
+        }
         
-        // Status de la sauvegarde
-        $response_array["status"] = "SUCCESS";
+        if($priceRetrait<10000){
+            
+        }
+        
+        if(empty($sommeTotal)){
+            $sommeTotal=0;
+        }
+        
         
         // Retourner le nouveau solde du client total du client
         $response_array["solde"] = $sommeTotal;
         
+        
+        // Status de la sauvegarde
+        $response_array["status"] = "SUCCESS";
 
     } catch (Exception $e) {
 
@@ -84,8 +92,6 @@
         $response_array["status"] = $e->getMessage();
     
     }
-
-
 
 echo json_encode($response_array);
 
